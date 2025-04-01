@@ -103,6 +103,7 @@ class CompanyResource extends Resource
     {
         return [
             RelationManagers\UsersRelationManager::class,
+            RelationManagers\DepartmentsRelationManager::class,
         ];
     }
 

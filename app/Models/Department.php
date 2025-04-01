@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Collection;
 
 class Department extends Model
 {
@@ -55,4 +56,18 @@ class Department extends Model
     {
         return $this->hasMany(JobPosting::class);
     }
+
+    public function getAllParentIds(): Collection
+    {
+        $parentIds = collect();
+        $current = $this;
+
+        while ($current->parent_id) {
+            $parentIds->push($current->parent_id);
+            $current = $current->parent;
+        }
+
+        return $parentIds;
+    }
+    
 } 

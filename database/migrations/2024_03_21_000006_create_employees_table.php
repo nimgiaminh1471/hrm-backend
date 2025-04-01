@@ -12,11 +12,10 @@ return new class extends Migration
             $table->id();
             $table->foreignId('company_id')->constrained()->cascadeOnDelete();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('department_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('position_id')->constrained()->cascadeOnDelete();
-            $table->string('employee_id')->unique();
-            $table->string('first_name');
-            $table->string('last_name');
+            $table->foreignId('department_id')->nullable()->constrained()->cascadeOnDelete();
+            $table->foreignId('position_id')->nullable()->constrained()->cascadeOnDelete();
+            $table->string('first_name')->nullable();
+            $table->string('last_name')->nullable();
             $table->string('email')->unique();
             $table->string('phone')->nullable();
             $table->date('date_of_birth')->nullable();
