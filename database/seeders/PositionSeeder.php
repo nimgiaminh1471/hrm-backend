@@ -2,169 +2,99 @@
 
 namespace Database\Seeders;
 
-use App\Models\Company;
-use App\Models\Department;
+use App\Enums\PositionLevel;
+use App\Models\Organization;
 use App\Models\Position;
 use Illuminate\Database\Seeder;
 
 class PositionSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
-        $companies = Company::all();
+        $organizations = Organization::all();
+        
+        foreach ($organizations as $organization) {
+            $positions = [
+                // Engineering Positions
+                [
+                    'title' => 'Software Engineer',
+                    'code' => 'SWE',
+                    'description' => 'Develop and maintain software applications',
+                    'responsibilities' => 'Write clean, maintainable code, participate in code reviews, collaborate with team members',
+                    'requirements' => 'Bachelor\'s degree in Computer Science, 2+ years of experience',
+                    'base_salary' => 80000,
+                    'level' => PositionLevel::MID,
+                    'is_active' => true,
+                ],
+                [
+                    'title' => 'Senior Software Engineer',
+                    'code' => 'SSWE',
+                    'description' => 'Lead software development initiatives',
+                    'responsibilities' => 'Lead technical decisions, mentor junior developers, architect solutions',
+                    'requirements' => 'Bachelor\'s degree in Computer Science, 5+ years of experience',
+                    'base_salary' => 120000,
+                    'level' => PositionLevel::SENIOR,
+                    'is_active' => true,
+                ],
+                [
+                    'title' => 'Engineering Manager',
+                    'code' => 'EM',
+                    'description' => 'Manage engineering team and projects',
+                    'responsibilities' => 'Team management, project planning, technical strategy',
+                    'requirements' => 'Bachelor\'s degree in Computer Science, 8+ years of experience',
+                    'base_salary' => 150000,
+                    'level' => PositionLevel::MANAGER,
+                    'is_active' => true,
+                ],
+                // HR Positions
+                [
+                    'title' => 'HR Specialist',
+                    'code' => 'HRS',
+                    'description' => 'Handle HR operations and employee relations',
+                    'responsibilities' => 'Recruitment, employee relations, HR policies',
+                    'requirements' => 'Bachelor\'s degree in HR or related field, 2+ years of experience',
+                    'base_salary' => 60000,
+                    'level' => PositionLevel::MID,
+                    'is_active' => true,
+                ],
+                [
+                    'title' => 'HR Manager',
+                    'code' => 'HRM',
+                    'description' => 'Lead HR department and initiatives',
+                    'responsibilities' => 'HR strategy, team management, organizational development',
+                    'requirements' => 'Bachelor\'s degree in HR or related field, 5+ years of experience',
+                    'base_salary' => 90000,
+                    'level' => PositionLevel::MANAGER,
+                    'is_active' => true,
+                ],
+                // Finance Positions
+                [
+                    'title' => 'Financial Analyst',
+                    'code' => 'FA',
+                    'description' => 'Analyze financial data and prepare reports',
+                    'responsibilities' => 'Financial analysis, reporting, budgeting',
+                    'requirements' => 'Bachelor\'s degree in Finance or Accounting, 2+ years of experience',
+                    'base_salary' => 70000,
+                    'level' => PositionLevel::MID,
+                    'is_active' => true,
+                ],
+                [
+                    'title' => 'Finance Manager',
+                    'code' => 'FM',
+                    'description' => 'Manage financial operations and strategy',
+                    'responsibilities' => 'Financial planning, team management, risk management',
+                    'requirements' => 'Bachelor\'s degree in Finance or Accounting, 5+ years of experience',
+                    'base_salary' => 100000,
+                    'level' => PositionLevel::MANAGER,
+                    'is_active' => true,
+                ],
+            ];
 
-        foreach ($companies as $company) {
-            $departments = Department::where('company_id', $company->id)->get();
-
-            foreach ($departments as $department) {
-                // Create positions based on department
-                $positions = [];
-
-                // Executive positions
-                if ($department->name === 'Executive') {
-                    $positions = [
-                        [
-                            'title' => 'Chief Executive Officer',
-                            'description' => 'Top executive responsible for overall company management',
-                            'department_id' => $department->id,
-                            'level' => 'C-Suite',
-                            'is_active' => true,
-                        ],
-                        [
-                            'title' => 'Chief Financial Officer',
-                            'description' => 'Senior financial executive',
-                            'department_id' => $department->id,
-                            'level' => 'C-Suite',
-                            'is_active' => true,
-                        ],
-                        [
-                            'title' => 'Chief Technology Officer',
-                            'description' => 'Senior technology executive',
-                            'department_id' => $department->id,
-                            'level' => 'C-Suite',
-                            'is_active' => true,
-                        ],
-                    ];
-                }
-                // HR positions
-                elseif ($department->name === 'Human Resources') {
-                    $positions = [
-                        [
-                            'title' => 'HR Director',
-                            'description' => 'Head of HR department',
-                            'department_id' => $department->id,
-                            'level' => 'Senior Management',
-                            'is_active' => true,
-                        ],
-                        [
-                            'title' => 'HR Manager',
-                            'description' => 'HR department manager',
-                            'department_id' => $department->id,
-                            'level' => 'Management',
-                            'is_active' => true,
-                        ],
-                        [
-                            'title' => 'HR Specialist',
-                            'description' => 'HR department specialist',
-                            'department_id' => $department->id,
-                            'level' => 'Professional',
-                            'is_active' => true,
-                        ],
-                    ];
-                }
-                // Technology positions
-                elseif ($department->name === 'Technology' || $department->name === 'Software Development') {
-                    $positions = [
-                        [
-                            'title' => 'Technical Director',
-                            'description' => 'Head of technical department',
-                            'department_id' => $department->id,
-                            'level' => 'Senior Management',
-                            'is_active' => true,
-                        ],
-                        [
-                            'title' => 'Senior Software Engineer',
-                            'description' => 'Senior software developer',
-                            'department_id' => $department->id,
-                            'level' => 'Senior Professional',
-                            'is_active' => true,
-                        ],
-                        [
-                            'title' => 'Software Engineer',
-                            'description' => 'Software developer',
-                            'department_id' => $department->id,
-                            'level' => 'Professional',
-                            'is_active' => true,
-                        ],
-                    ];
-                }
-                // Finance positions
-                elseif ($department->name === 'Finance' || $department->name === 'Accounting') {
-                    $positions = [
-                        [
-                            'title' => 'Finance Director',
-                            'description' => 'Head of finance department',
-                            'department_id' => $department->id,
-                            'level' => 'Senior Management',
-                            'is_active' => true,
-                        ],
-                        [
-                            'title' => 'Senior Accountant',
-                            'description' => 'Senior accounting professional',
-                            'department_id' => $department->id,
-                            'level' => 'Senior Professional',
-                            'is_active' => true,
-                        ],
-                        [
-                            'title' => 'Accountant',
-                            'description' => 'Accounting professional',
-                            'department_id' => $department->id,
-                            'level' => 'Professional',
-                            'is_active' => true,
-                        ],
-                    ];
-                }
-                // Operations positions
-                elseif ($department->name === 'Operations') {
-                    $positions = [
-                        [
-                            'title' => 'Operations Director',
-                            'description' => 'Head of operations department',
-                            'department_id' => $department->id,
-                            'level' => 'Senior Management',
-                            'is_active' => true,
-                        ],
-                        [
-                            'title' => 'Operations Manager',
-                            'description' => 'Operations department manager',
-                            'department_id' => $department->id,
-                            'level' => 'Management',
-                            'is_active' => true,
-                        ],
-                        [
-                            'title' => 'Operations Specialist',
-                            'description' => 'Operations department specialist',
-                            'department_id' => $department->id,
-                            'level' => 'Professional',
-                            'is_active' => true,
-                        ],
-                    ];
-                }
-
-                // Create positions
-                foreach ($positions as $positionData) {
-                    Position::create([
-                        'company_id' => $company->id,
-                        'title' => $positionData['title'],
-                        'description' => $positionData['description'],
-                        'department_id' => $positionData['department_id'],
-                        'level' => $positionData['level'],
-                        'is_active' => $positionData['is_active'],
-                    ]);
-                }
+            foreach ($positions as $position) {
+                Position::create([
+                    ...$position,
+                    'organization_id' => $organization->id,
+                ]);
             }
         }
     }

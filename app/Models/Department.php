@@ -2,72 +2,55 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Collection;
 
 class Department extends Model
 {
-    use SoftDeletes;
+    use HasFactory, SoftDeletes;
 
     protected $fillable = [
-        'company_id',
-        'parent_id',
+        'organization_id',
         'name',
+        'code',
         'description',
+        'parent_id',
         'head_id',
-        'settings',
-        'is_active',
+        'is_active'
     ];
 
     protected $casts = [
-        'settings' => 'array',
         'is_active' => 'boolean',
     ];
 
-    public function company(): BelongsTo
+    public function organization()
     {
-        return $this->belongsTo(Company::class);
+        return $this->belongsTo(Organization::class);
     }
 
-    public function parent(): BelongsTo
+    public function parent()
     {
         return $this->belongsTo(Department::class, 'parent_id');
     }
 
-    public function children(): HasMany
+    public function children()
     {
         return $this->hasMany(Department::class, 'parent_id');
     }
 
-    public function head(): BelongsTo
+    public function head()
     {
         return $this->belongsTo(User::class, 'head_id');
     }
 
-    public function employees(): HasMany
+    public function teams()
     {
-        return $this->hasMany(Employee::class);
+        return $this->hasMany(Team::class);
     }
 
-    public function jobPostings(): HasMany
+    public function users()
     {
-        return $this->hasMany(JobPosting::class);
+        return $this->hasMany(User::class);
     }
-
-    public function getAllParentIds(): Collection
-    {
-        $parentIds = collect();
-        $current = $this;
-
-        while ($current->parent_id) {
-            $parentIds->push($current->parent_id);
-            $current = $current->parent;
-        }
-
-        return $parentIds;
-    }
-    
 } 
