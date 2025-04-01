@@ -3,6 +3,8 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\Auth;
+use App\Auth\CentralUserGuard;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -20,5 +22,11 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         //
+        Auth::extend('central', function ($app, $name, array $config) {
+            return new CentralUserGuard(
+                Auth::createUserProvider($config['provider']),
+                $app->make('request')
+            );
+        });
     }
 }

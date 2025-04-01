@@ -2,41 +2,54 @@
 
 namespace App\Models;
 
-use App\Enums\LeaveRequestStatus;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
-class LeaveRequest extends ScopedModel
+class LeaveRequest extends Model
 {
+    use SoftDeletes;
+
     protected $fillable = [
+        'company_id',
         'employee_id',
         'leave_type_id',
         'start_date',
         'end_date',
-        'duration_days',
+        'days',
         'reason',
         'status',
         'approved_by',
         'approved_at',
-        'rejection_reason',
+        'rejected_by',
         'rejected_at',
-        'is_active',
+        'rejection_reason',
+        'cancelled_by',
+        'cancelled_at',
+        'cancellation_reason',
         'notes',
+        'is_active',
     ];
 
     protected $casts = [
         'start_date' => 'date',
         'end_date' => 'date',
-        'duration_days' => 'float',
-        'status' => LeaveRequestStatus::class,
+        'days' => 'integer',
         'approved_at' => 'datetime',
         'rejected_at' => 'datetime',
-        'is_active' => 'boolean',
+        'cancelled_at' => 'datetime',
         'notes' => 'array',
+        'is_active' => 'boolean',
     ];
+
+    public function company(): BelongsTo
+    {
+        return $this->belongsTo(Company::class);
+    }
 
     public function employee(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'employee_id');
+        return $this->belongsTo(Employee::class);
     }
 
     public function leaveType(): BelongsTo
@@ -49,49 +62,13 @@ class LeaveRequest extends ScopedModel
         return $this->belongsTo(User::class, 'approved_by');
     }
 
-    public function scopeActive($query)
+    public function rejector(): BelongsTo
     {
-        return $query->where('is_active', true);
+        return $this->belongsTo(User::class, 'rejected_by');
     }
 
-    public function scopeStatus($query, LeaveRequestStatus $status)
+    public function canceller(): BelongsTo
     {
-        return $query->where('status', $status);
-    }
-
-    public function scopeEmployee($query, int $employeeId)
-    {
-        return $query->where('employee_id', $employeeId);
-    }
-
-    public function scopeLeaveType($query, int $leaveTypeId)
-    {
-        return $query->where('leave_type_id', $leaveTypeId);
-    }
-
-    public function scopeDateRange($query, string $start, string $end)
-    {
-        return $query->where(function ($q) use ($start, $end) {
-            $q->whereBetween('start_date', [$start, $end])
-              ->orWhereBetween('end_date', [$start, $end])
-              ->orWhere(function ($q) use ($start, $end) {
-                  $q->where('start_date', '<=', $start)
-                    ->where('end_date', '>=', $end);
-              });
-        });
-    }
-
-    public function scopeSearch($query, string $search)
-    {
-        return $query->where(function ($q) use ($search) {
-            $q->whereHas('employee', function ($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('email', 'like', "%{$search}%");
-            })
-            ->orWhereHas('leaveType', function ($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%");
-            })
-            ->orWhere('reason', 'like', "%{$search}%");
-        });
+        return $this->belongsTo(User::class, 'cancelled_by');
     }
 } 
