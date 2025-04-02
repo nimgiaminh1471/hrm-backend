@@ -12,11 +12,12 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable, SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
@@ -24,16 +25,39 @@ class User extends Authenticatable
      * @var list<string>
      */
     protected $fillable = [
+        'organization_id',
         'name',
         'email',
         'password',
-        'organization_id',
-        'department_id',
-        'team_id',
-        'position_id',
         'employee_id',
-        'date_of_birth',
+        'status',
+        'first_name',
+        'last_name',
         'gender',
+        'date_of_birth',
+        'phone',
+        'address',
+        'city',
+        'state',
+        'country',
+        'postal_code',
+        'department_id',
+        'position_id',
+        'team_id',
+        'manager_id',
+        'hire_date',
+        'employment_status',
+        'employment_type',
+        'salary',
+        'bank_name',
+        'bank_account',
+        'bank_branch',
+        'tax_id',
+        'social_security_number',
+        'emergency_contact_name',
+        'emergency_contact_phone',
+        'emergency_contact_relationship',
+        'date_of_birth',
         'marital_status',
         'nationality',
         'national_id',
@@ -43,7 +67,6 @@ class User extends Authenticatable
         'address_emergency',
         'joining_date',
         'exit_date',
-        'employment_status',
         'skills',
         'certifications',
         'education',
@@ -84,6 +107,7 @@ class User extends Authenticatable
             'gender' => Gender::class,
             'marital_status' => MaritalStatus::class,
             'employment_status' => EmploymentStatus::class,
+            'salary' => 'decimal:2',
         ];
     }
 
@@ -120,5 +144,20 @@ class User extends Authenticatable
     public function managedTeams(): HasMany
     {
         return $this->hasMany(Team::class, 'leader_id');
+    }
+
+    public function manager(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'manager_id');
+    }
+
+    public function subordinates(): HasMany
+    {
+        return $this->hasMany(User::class, 'manager_id');
+    }
+
+    public function getFullNameAttribute()
+    {
+        return "{$this->first_name} {$this->last_name}";
     }
 }
